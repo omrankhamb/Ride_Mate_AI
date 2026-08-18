@@ -1,0 +1,9 @@
+{
+  "name": "RideMate AI",
+  "short_name": "RideMate",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#F5F7F8",
+  "theme_color": "#0F7A4A",
+  "description": "Shared auto rider and driver matching MVP"
+}

@@ -1,0 +1,66 @@
+{
+  "users": [
+    {
+      "id": "user_0a23a92c-b605-4710-b0df-611e711438d4",
+      "fullName": "Demo Driver",
+      "mobileNumber": "9000000001",
+      "email": "driver150148@ridemate.test",
+      "passwordHash": "655e64c6ffad53c1939dabdb898459f6:5623df6cdf481284b7e04357c006895f43438bef89f66a09afccc719e13dbef8f8275ed538cc590163843fffe3cd2a0feb6866e11fe92ab1759bf2f4ec142ad4",
+      "role": "DRIVER",
+      "createdAt": "2026-08-18T09:31:48.407Z",
+      "updatedAt": "2026-08-18T09:31:48.407Z"
+    },
+    {
+      "id": "user_815feaf1-4210-45f6-bac9-f493974f2510",
+      "fullName": "Demo Rider",
+      "mobileNumber": "9000000002",
+      "email": "rider150148@ridemate.test",
+      "passwordHash": "627fb36f2c468ca8e5109524b410f3d1:be3a074dc1dd79c12e88d877aac821e6c9b434ddd0aad61ac72e60b6671fbb2bdecba059d87effdc169d03a0984e223b95220318a3ba596cca40be9d667d47ab",
+      "role": "RIDER",
+      "createdAt": "2026-08-18T09:31:48.614Z",
+      "updatedAt": "2026-08-18T09:31:48.614Z"
+    },
+    {
+      "id": "user_7cd47ed6-3a8b-4b27-872a-cebde07c1da6",
+      "fullName": "Omprsad",
+      "mobileNumber": "Rankhamb",
+      "email": "omprasad.1251070256@vit.edu",
+      "passwordHash": "dbfe32283bb806683e80d62afc7fddc1:f607bbfd66794647fadd9fdd9e31feb7f6eb19ffc3130ec3fdb1db988d5239adfbfcdacfa1f8064b1d93025c26111013541ee6de0e42f287c0ce5545fe93d5e8",
+      "role": "RIDER",
+      "createdAt": "2026-08-18T09:40:22.500Z",
+      "updatedAt": "2026-08-18T09:40:22.500Z"
+    }
+  ],
+  "driverProfiles": [
+    {
+      "id": "driver_ee05ba1e-f73f-4936-abc2-c5fb650b845d",
+      "userId": "user_0a23a92c-b605-4710-b0df-611e711438d4",
+      "vehicleType": "Shared Auto",
+      "vehicleNumber": "MH12AB1234",
+      "isOnline": true,
+      "lastLocation": {
+        "label": "Demo Stand",
+        "lat": 18.5204,
+        "lng": 73.8567
+      },
+      "createdAt": "2026-08-18T09:31:48.407Z",
+      "updatedAt": "2026-08-18T09:31:48.603Z"
+    }
+  ],
+  "rides": [
+    {
+      "id": "ride_a96b343d-f7dc-4460-abdf-8f74d014ea72",
+      "riderId": "user_815feaf1-4210-45f6-bac9-f493974f2510",
+      "driverId": "user_0a23a92c-b605-4710-b0df-611e711438d4",
+      "pickup": "College Gate",
+      "destination": "Railway Station",
+      "coRiderPickupDistanceMeters": 700,
+      "estimatedFare": 86,
+      "etaMinutes": 6,
+      "otp": "2336",
+      "status": "MATCHED",
+      "createdAt": "2026-08-18T09:31:48.699Z",
+      "updatedAt": "2026-08-18T09:31:48.699Z"
+    }
+  ]
+}

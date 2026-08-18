@@ -1,0 +1,17 @@
+{
+  "name": "ridemate-ai",
+  "version": "1.0.0",
+  "description": "RideMate AI shared auto ride matching MVP",
+  "main": "backend/src/server.js",
+  "scripts": {
+    "start": "node backend/src/server.js",
+    "dev": "node backend/src/server.js"
+  },
+  "keywords": [
+    "ride-sharing",
+    "shared-auto",
+    "mvp"
+  ],
+  "author": "",
+  "license": "MIT"
+}
