@@ -5,7 +5,8 @@
   "main": "backend/src/server.js",
   "scripts": {
     "start": "node backend/src/server.js",
-    "dev": "node backend/src/server.js"
+    "dev": "node backend/src/server.js",
+    "test": "jest"
   },
   "keywords": [
     "ride-sharing",
@@ -13,5 +14,13 @@
     "mvp"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "mysql2": "^3.23.3"
+  },
+  "devDependencies": {
+    "dotenv": "^17.4.2",
+    "jest": "^30.4.2",
+    "supertest": "^7.2.2"
+  }
 }

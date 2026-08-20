@@ -1,0 +1,5 @@
+Flask>=3.0
+httpx>=0.27
+numpy>=2.0
+scikit-learn>=1.5
+sentence-transformers>=3.0

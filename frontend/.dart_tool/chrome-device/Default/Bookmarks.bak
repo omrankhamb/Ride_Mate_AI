@@ -1,0 +1,628 @@
+{
+   "checksum": "a18e32b659b0f621216310dd99fa4784",
+   "roots": {
+      "bookmark_bar": {
+         "children": [ {
+            "date_added": "13431574401286183",
+            "date_last_used": "0",
+            "guid": "736a4512-2416-4f20-9f36-8ef01ae1423c",
+            "id": "86",
+            "name": "Adobe Acrobat Pro DC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_apdc"
+         }, {
+            "date_added": "13431574401285950",
+            "date_last_used": "0",
+            "guid": "8ff7051d-de9c-422e-991a-d455ce9dad9c",
+            "id": "85",
+            "name": "Adobe Creative Cloud All Apps for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_cci"
+         }, {
+            "date_added": "13431574401285668",
+            "date_last_used": "0",
+            "guid": "45fc2b5e-9e27-4939-acd1-8a3893c802d4",
+            "id": "84",
+            "name": "Adobe Premiere Pro CC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_ppcc"
+         }, {
+            "date_added": "13431574401285068",
+            "date_last_used": "0",
+            "guid": "ea8ff985-b91b-4a93-ba9d-3384f4f81276",
+            "id": "83",
+            "name": "McAfee Online Protection – Benefits for Samsung PCs",
+            "type": "url",
+            "url": "https://consroute.mcafee.com/app?csrc=browserfav&affid=1348&clicksrc=browserfav"
+         }, {
+            "date_added": "13316877635104188",
+            "date_last_used": "13425372831951754",
+            "guid": "29730c41-d66a-44a7-9930-f15ecbb23eb5",
+            "id": "11",
+            "name": "Gmail",
+            "type": "url",
+            "url": "https://mail.google.com/mail/u/0/?tab=rm#inbox"
+         }, {
+            "date_added": "13317054164324368",
+            "date_last_used": "13414038903764172",
+            "guid": "f36c0fc9-ca36-4619-a9f1-241375c0c387",
+            "id": "12",
+            "name": "HackerRank",
+            "type": "url",
+            "url": "https://www.hackerrank.com/dashboard"
+         }, {
+            "date_added": "13317054213772326",
+            "date_last_used": "0",
+            "guid": "684d94aa-6241-4040-81ec-0db4ec9f651f",
+            "id": "13",
+            "name": "GFG",
+            "type": "url",
+            "url": "https://www.geeksforgeeks.org/"
+         }, {
+            "date_added": "13317143221498896",
+            "date_last_used": "13332783359548282",
+            "guid": "e63e9b49-39c2-4081-82b0-94cf85c0807f",
+            "id": "14",
+            "name": "WhatsApp",
+            "type": "url",
+            "url": "https://web.whatsapp.com/"
+         }, {
+            "date_added": "13318144556071052",
+            "date_last_used": "0",
+            "guid": "1b497e03-45e8-4b3a-ae10-4c67ef534797",
+            "id": "15",
+            "name": "zoom",
+            "type": "url",
+            "url": "https://zoom.us/signin#/login"
+         }, {
+            "date_added": "13327218862634992",
+            "date_last_used": "0",
+            "guid": "6775c020-20bd-4c15-affc-f6f85df23df2",
+            "id": "16",
+            "name": "LinkedList (Java Platform SE 8 )",
+            "type": "url",
+            "url": "https://docs.oracle.com/javase/8/docs/api/java/util/LinkedList.html"
+         }, {
+            "date_added": "13327218899891964",
+            "date_last_used": "0",
+            "guid": "6f3bfe7d-a00e-4ee7-95b8-858530f8f22c",
+            "id": "17",
+            "name": "Lesson: Introduction to Collections (The Java™ Tutorials > Collections)",
+            "type": "url",
+            "url": "https://docs.oracle.com/javase/tutorial/collections/intro/index.html"
+         }, {
+            "date_added": "13327219262653569",
+            "date_last_used": "0",
+            "guid": "1d112ef1-3f90-4e84-8848-d7bc97bed6c6",
+            "id": "18",
+            "name": "C# docs - get started, tutorials, reference. | Microsoft Learn",
+            "type": "url",
+            "url": "https://learn.microsoft.com/en-us/dotnet/csharp/"
+         }, {
+            "date_added": "13327817551696290",
+            "date_last_used": "0",
+            "guid": "289df038-b15f-4c12-ad10-bc9a0b93e6d9",
+            "id": "19",
+            "name": "https://downloads.apache.org/tomcat/tomcat-9/v9.0.74/bin/apache-tomcat-9.0.74-windows-x64.zip.asc",
+            "type": "url",
+            "url": "https://downloads.apache.org/tomcat/tomcat-9/v9.0.74/bin/apache-tomcat-9.0.74-windows-x64.zip.asc"
+         }, {
+            "date_added": "13327819733163121",
+            "date_last_used": "0",
+            "guid": "91b7ff8b-a3b3-48ca-af8c-9c1d5ad77913",
+            "id": "20",
+            "name": "Spring | Home",
+            "type": "url",
+            "url": "https://spring.io/"
+         }, {
+            "date_added": "13327819783942236",
+            "date_last_used": "0",
+            "guid": "6c59e2e4-a219-406b-bda5-d99e82c439d2",
+            "id": "21",
+            "name": "Spring Boot - Introduction",
+            "type": "url",
+            "url": "https://www.tutorialspoint.com/spring_boot/spring_boot_introduction.htm"
+         }, {
+            "date_added": "13327819815326723",
+            "date_last_used": "0",
+            "guid": "7410ba8e-8837-4847-991b-8037f2cc3d19",
+            "id": "22",
+            "name": "Apache Tomcat 9 (9.0.74) - Documentation Index",
+            "type": "url",
+            "url": "https://tomcat.apache.org/tomcat-9.0-doc/index.html"
+         }, {
+            "date_added": "13327824530918833",
+            "date_last_used": "0",
+            "guid": "d18d113e-0b3c-484f-8f52-45d554b49bd2",
+            "id": "23",
+            "name": "GitHub: Let’s build from here · GitHub",
+            "type": "url",
+            "url": "https://github.com/"
+         }, {
+            "date_added": "13410298563097745",
+            "date_last_used": "0",
+            "guid": "a984f247-e19d-486b-9660-087c58f8c9cd",
+            "id": "24",
+            "name": "Plant Disease Detection",
+            "type": "url",
+            "url": "http://localhost:5000/peach"
+         }, {
+            "date_added": "13419154606139967",
+            "date_last_used": "0",
+            "guid": "e65daaa8-9395-4e92-90d0-7a71d422f5ce",
+            "id": "25",
+            "name": "Adobe Acrobat Pro DC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_apdc"
+         }, {
+            "date_added": "13419154606139359",
+            "date_last_used": "0",
+            "guid": "8902238a-8c92-4507-8e14-e68dddf9fc2a",
+            "id": "26",
+            "name": "Adobe Creative Cloud All Apps for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_cci"
+         }, {
+            "date_added": "13419154606138743",
+            "date_last_used": "0",
+            "guid": "65c7bb65-3293-4bcc-8555-7f5f182e32b0",
+            "id": "27",
+            "name": "Adobe Premiere Pro CC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_ppcc"
+         }, {
+            "date_added": "13419154606137955",
+            "date_last_used": "0",
+            "guid": "fd400e9f-fdbf-49a7-b773-652d5c5123ba",
+            "id": "28",
+            "name": "McAfee Online Protection – Benefits for Samsung PCs",
+            "type": "url",
+            "url": "https://consroute.mcafee.com/app?csrc=browserfav&affid=1348&clicksrc=browserfav"
+         }, {
+            "date_added": "13419135894279409",
+            "date_last_used": "0",
+            "guid": "724a9fba-b532-43b5-9e33-f339fa77862c",
+            "id": "29",
+            "name": "Adobe Acrobat Pro DC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_apdc"
+         }, {
+            "date_added": "13419135894278765",
+            "date_last_used": "0",
+            "guid": "6e408be1-39a3-4889-9cfe-bff6361e6abf",
+            "id": "30",
+            "name": "Adobe Creative Cloud All Apps for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_cci"
+         }, {
+            "date_added": "13419135894278101",
+            "date_last_used": "0",
+            "guid": "b07829e3-2f4e-4d8b-aac3-0a86055c2825",
+            "id": "31",
+            "name": "Adobe Premiere Pro CC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_ppcc"
+         }, {
+            "date_added": "13419135894277372",
+            "date_last_used": "0",
+            "guid": "fe076bca-5638-4f1d-9403-5cd8d003f398",
+            "id": "32",
+            "name": "McAfee Online Protection – Benefits for Samsung PCs",
+            "type": "url",
+            "url": "https://consroute.mcafee.com/app?csrc=browserfav&affid=1348&clicksrc=browserfav"
+         }, {
+            "date_added": "13419135601718626",
+            "date_last_used": "0",
+            "guid": "80f00b6a-b7df-41db-9201-2981cd50d179",
+            "id": "33",
+            "name": "Adobe Acrobat Pro DC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_apdc"
+         }, {
+            "date_added": "13419135601718187",
+            "date_last_used": "0",
+            "guid": "1afdc9ee-9d74-4f3a-818f-0ba719ba2f0c",
+            "id": "34",
+            "name": "Adobe Creative Cloud All Apps for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_cci"
+         }, {
+            "date_added": "13419135601717653",
+            "date_last_used": "0",
+            "guid": "4b5c15cf-6046-4d9c-a825-1f37dde4cc25",
+            "id": "35",
+            "name": "Adobe Premiere Pro CC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_ppcc"
+         }, {
+            "date_added": "13419135601716918",
+            "date_last_used": "0",
+            "guid": "51b74be5-54e5-4cde-9e6c-6af3dba0235b",
+            "id": "36",
+            "name": "McAfee Online Protection – Benefits for Samsung PCs",
+            "type": "url",
+            "url": "https://consroute.mcafee.com/app?csrc=browserfav&affid=1348&clicksrc=browserfav"
+         }, {
+            "date_added": "13419215477098096",
+            "date_last_used": "0",
+            "guid": "8a76ba70-d96c-4d12-aa01-f1e088fc660d",
+            "id": "37",
+            "name": "Adobe Acrobat Pro DC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_apdc"
+         }, {
+            "date_added": "13419215477097451",
+            "date_last_used": "0",
+            "guid": "43bb0415-26b0-468f-9500-9c2842c9bb88",
+            "id": "38",
+            "name": "Adobe Creative Cloud All Apps for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_cci"
+         }, {
+            "date_added": "13419215477096656",
+            "date_last_used": "0",
+            "guid": "ec15bd9d-3a5d-4b91-aef1-a825785729d1",
+            "id": "39",
+            "name": "Adobe Premiere Pro CC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_ppcc"
+         }, {
+            "date_added": "13419215477095669",
+            "date_last_used": "0",
+            "guid": "a5e02e95-c56e-409e-bdf1-b8cb1db20048",
+            "id": "40",
+            "name": "McAfee Online Protection – Benefits for Samsung PCs",
+            "type": "url",
+            "url": "https://consroute.mcafee.com/app?csrc=browserfav&affid=1348&clicksrc=browserfav"
+         }, {
+            "date_added": "13419190881412887",
+            "date_last_used": "0",
+            "guid": "2ad41101-9269-4530-8d08-576dcf28a3d5",
+            "id": "41",
+            "name": "Adobe Acrobat Pro DC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_apdc"
+         }, {
+            "date_added": "13419190881412431",
+            "date_last_used": "0",
+            "guid": "5ec40c3d-437a-4bbd-862e-7e88366745b1",
+            "id": "42",
+            "name": "Adobe Creative Cloud All Apps for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_cci"
+         }, {
+            "date_added": "13419190881412009",
+            "date_last_used": "0",
+            "guid": "070c9726-d4ee-4d6f-9393-dfd347b36070",
+            "id": "43",
+            "name": "Adobe Premiere Pro CC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_ppcc"
+         }, {
+            "date_added": "13419190881411222",
+            "date_last_used": "0",
+            "guid": "28981e74-43ee-4529-bf85-abc8a537b0e5",
+            "id": "44",
+            "name": "McAfee Online Protection – Benefits for Samsung PCs",
+            "type": "url",
+            "url": "https://consroute.mcafee.com/app?csrc=browserfav&affid=1348&clicksrc=browserfav"
+         }, {
+            "date_added": "13419170260536581",
+            "date_last_used": "0",
+            "guid": "fd70ae68-9ae5-466f-9360-cecccc04447d",
+            "id": "45",
+            "name": "Adobe Acrobat Pro DC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_apdc"
+         }, {
+            "date_added": "13419170260535968",
+            "date_last_used": "0",
+            "guid": "ef9d24cd-30c4-451a-9640-6813e5d526b4",
+            "id": "46",
+            "name": "Adobe Creative Cloud All Apps for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_cci"
+         }, {
+            "date_added": "13419170260535319",
+            "date_last_used": "0",
+            "guid": "db7c0f4b-6f38-4c05-ac52-4f80e2524b64",
+            "id": "47",
+            "name": "Adobe Premiere Pro CC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_ppcc"
+         }, {
+            "date_added": "13419170260534168",
+            "date_last_used": "0",
+            "guid": "e053fc45-caa6-4f40-ad0e-bd1eaea21ccf",
+            "id": "48",
+            "name": "McAfee Online Protection – Benefits for Samsung PCs",
+            "type": "url",
+            "url": "https://consroute.mcafee.com/app?csrc=browserfav&affid=1348&clicksrc=browserfav"
+         }, {
+            "date_added": "13419169871696022",
+            "date_last_used": "0",
+            "guid": "18b5fb83-f580-4a17-88ee-627a56abef2b",
+            "id": "49",
+            "name": "Adobe Acrobat Pro DC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_apdc"
+         }, {
+            "date_added": "13419169871694983",
+            "date_last_used": "0",
+            "guid": "e31cdd2c-e959-4522-9db9-550e4a6ed92e",
+            "id": "50",
+            "name": "Adobe Creative Cloud All Apps for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_cci"
+         }, {
+            "date_added": "13419169871693960",
+            "date_last_used": "0",
+            "guid": "889c08b8-2ada-4661-9fc2-7c273790514a",
+            "id": "51",
+            "name": "Adobe Premiere Pro CC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_ppcc"
+         }, {
+            "date_added": "13419169871692307",
+            "date_last_used": "0",
+            "guid": "cb2a3a60-87f9-4b0a-81b9-45436aa55397",
+            "id": "52",
+            "name": "McAfee Online Protection – Benefits for Samsung PCs",
+            "type": "url",
+            "url": "https://consroute.mcafee.com/app?csrc=browserfav&affid=1348&clicksrc=browserfav"
+         }, {
+            "date_added": "13421147448948502",
+            "date_last_used": "0",
+            "guid": "314ecd3e-837f-4bd6-aaa0-97a8fcd6d14f",
+            "id": "53",
+            "name": "Adobe Acrobat Pro DC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_apdc"
+         }, {
+            "date_added": "13421147448948012",
+            "date_last_used": "0",
+            "guid": "122c3f91-818e-4d41-94d7-5e4ab3df7973",
+            "id": "54",
+            "name": "Adobe Creative Cloud All Apps for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_cci"
+         }, {
+            "date_added": "13421147448947388",
+            "date_last_used": "0",
+            "guid": "183fab17-eb4a-44c7-bf6a-4d4c1ad8060f",
+            "id": "55",
+            "name": "Adobe Premiere Pro CC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_ppcc"
+         }, {
+            "date_added": "13421147448946359",
+            "date_last_used": "0",
+            "guid": "53945278-890b-45a5-b922-5153f7a4c4aa",
+            "id": "56",
+            "name": "McAfee Online Protection – Benefits for Samsung PCs",
+            "type": "url",
+            "url": "https://consroute.mcafee.com/app?csrc=browserfav&affid=1348&clicksrc=browserfav"
+         }, {
+            "date_added": "13419423755253525",
+            "date_last_used": "0",
+            "guid": "98623edd-3f4f-4382-af5a-8008d5760f15",
+            "id": "57",
+            "name": "Adobe Acrobat Pro DC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_apdc"
+         }, {
+            "date_added": "13419423755252334",
+            "date_last_used": "0",
+            "guid": "91eb75f5-7b52-40a0-a52b-c50eca2fcdca",
+            "id": "58",
+            "name": "Adobe Creative Cloud All Apps for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_cci"
+         }, {
+            "date_added": "13419423755251517",
+            "date_last_used": "0",
+            "guid": "2df9188a-09f7-4375-8d99-1ce2707c2dfa",
+            "id": "59",
+            "name": "Adobe Premiere Pro CC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_ppcc"
+         }, {
+            "date_added": "13419423755249510",
+            "date_last_used": "0",
+            "guid": "08eda7b1-06f1-4804-a6d4-b5a09a04724a",
+            "id": "60",
+            "name": "McAfee Online Protection – Benefits for Samsung PCs",
+            "type": "url",
+            "url": "https://consroute.mcafee.com/app?csrc=browserfav&affid=1348&clicksrc=browserfav"
+         }, {
+            "date_added": "13419299349890092",
+            "date_last_used": "0",
+            "guid": "27a6c8b5-7f5a-4c4e-b11f-6452bab865f6",
+            "id": "61",
+            "name": "Adobe Acrobat Pro DC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_apdc"
+         }, {
+            "date_added": "13419299349889642",
+            "date_last_used": "0",
+            "guid": "8575e471-51fb-4fc9-82b6-0e547ccc74f5",
+            "id": "62",
+            "name": "Adobe Creative Cloud All Apps for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_cci"
+         }, {
+            "date_added": "13419299349889167",
+            "date_last_used": "0",
+            "guid": "5a556f49-25ae-4896-805a-ffb219563005",
+            "id": "63",
+            "name": "Adobe Premiere Pro CC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_ppcc"
+         }, {
+            "date_added": "13419299349888098",
+            "date_last_used": "0",
+            "guid": "3e3525e7-311d-4fab-aabd-cd4276a63cfe",
+            "id": "64",
+            "name": "McAfee Online Protection – Benefits for Samsung PCs",
+            "type": "url",
+            "url": "https://consroute.mcafee.com/app?csrc=browserfav&affid=1348&clicksrc=browserfav"
+         }, {
+            "date_added": "13419216177795200",
+            "date_last_used": "0",
+            "guid": "98361458-a179-44a8-8baa-c0d1f605a014",
+            "id": "65",
+            "name": "Adobe Acrobat Pro DC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_apdc"
+         }, {
+            "date_added": "13419216177794696",
+            "date_last_used": "0",
+            "guid": "a0ec88c1-5602-4a89-81d3-6126281ef45f",
+            "id": "66",
+            "name": "Adobe Creative Cloud All Apps for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_cci"
+         }, {
+            "date_added": "13419216177794170",
+            "date_last_used": "0",
+            "guid": "53f3c3a6-0530-46e1-a74b-cefb8025f9e6",
+            "id": "67",
+            "name": "Adobe Premiere Pro CC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_ppcc"
+         }, {
+            "date_added": "13419216177793464",
+            "date_last_used": "0",
+            "guid": "890c61b0-7673-4aaf-9618-8111ac875135",
+            "id": "68",
+            "name": "McAfee Online Protection – Benefits for Samsung PCs",
+            "type": "url",
+            "url": "https://consroute.mcafee.com/app?csrc=browserfav&affid=1348&clicksrc=browserfav"
+         }, {
+            "date_added": "13431571623230708",
+            "date_last_used": "0",
+            "guid": "dbe495da-b873-4ac2-ba13-d02c3d19bf0f",
+            "id": "81",
+            "name": "Adobe Acrobat Pro DC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_apdc"
+         }, {
+            "date_added": "13431571623230521",
+            "date_last_used": "0",
+            "guid": "6b53c97b-f4ea-463b-98a5-c61173bd6548",
+            "id": "80",
+            "name": "Adobe Creative Cloud All Apps for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_cci"
+         }, {
+            "date_added": "13431571623230314",
+            "date_last_used": "0",
+            "guid": "d1aa5aad-7087-4484-9e58-364b09c4b442",
+            "id": "79",
+            "name": "Adobe Premiere Pro CC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_ppcc"
+         }, {
+            "date_added": "13431571623229784",
+            "date_last_used": "0",
+            "guid": "318066a9-7c1f-4f7f-a866-f9edfa289f41",
+            "id": "78",
+            "name": "McAfee Online Protection – Benefits for Samsung PCs",
+            "type": "url",
+            "url": "https://consroute.mcafee.com/app?csrc=browserfav&affid=1348&clicksrc=browserfav"
+         }, {
+            "date_added": "13431528919505193",
+            "date_last_used": "0",
+            "guid": "cb7f2a06-7cf1-4181-a707-62a862c14490",
+            "id": "76",
+            "name": "Adobe Acrobat Pro DC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_apdc"
+         }, {
+            "date_added": "13431528919505049",
+            "date_last_used": "0",
+            "guid": "363c995a-6008-4d32-89d2-65bd1c47edac",
+            "id": "75",
+            "name": "Adobe Creative Cloud All Apps for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_cci"
+         }, {
+            "date_added": "13431528919504827",
+            "date_last_used": "0",
+            "guid": "d6a1bc13-4d79-49e5-99fd-f46237d2650e",
+            "id": "74",
+            "name": "Adobe Premiere Pro CC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_ppcc"
+         }, {
+            "date_added": "13431528919502822",
+            "date_last_used": "0",
+            "guid": "2ffeb107-07c6-46d1-bfdb-97de3e0b87a4",
+            "id": "73",
+            "name": "McAfee Online Protection – Benefits for Samsung PCs",
+            "type": "url",
+            "url": "https://consroute.mcafee.com/app?csrc=browserfav&affid=1348&clicksrc=browserfav"
+         }, {
+            "date_added": "13431527325370470",
+            "date_last_used": "0",
+            "guid": "0dd7067c-343f-4834-9f75-20196690f7ef",
+            "id": "10",
+            "name": "Adobe Acrobat Pro DC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_apdc"
+         }, {
+            "date_added": "13431527325370332",
+            "date_last_used": "0",
+            "guid": "4cd54419-50bc-4cff-8ed9-5e0b884e5ce1",
+            "id": "9",
+            "name": "Adobe Creative Cloud All Apps for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_cci"
+         }, {
+            "date_added": "13431527325370146",
+            "date_last_used": "0",
+            "guid": "ea6a4040-d46b-4356-9bdf-48e737237cdd",
+            "id": "8",
+            "name": "Adobe Premiere Pro CC for Samsung",
+            "type": "url",
+            "url": "http://www.adobe.com/go/samsung_ppcc"
+         }, {
+            "date_added": "13431527325368882",
+            "date_last_used": "0",
+            "guid": "0f010b17-c9bf-4912-b775-344596a9ac12",
+            "id": "7",
+            "name": "McAfee Online Protection – Benefits for Samsung PCs",
+            "type": "url",
+            "url": "https://consroute.mcafee.com/app?csrc=browserfav&affid=1348&clicksrc=browserfav"
+         } ],
+         "date_added": "13431527325063927",
+         "date_last_used": "0",
+         "date_modified": "13431574401286183",
+         "guid": "0bc5d13f-2cba-5d74-951f-3f233fe6c908",
+         "id": "1",
+         "name": "Bookmarks bar",
+         "type": "folder"
+      },
+      "other": {
+         "children": [  ],
+         "date_added": "13431527325063927",
+         "date_last_used": "0",
+         "date_modified": "0",
+         "guid": "82b081ec-3dd3-529c-8475-ab6c344590dd",
+         "id": "2",
+         "name": "Other bookmarks",
+         "type": "folder"
+      },
+      "synced": {
+         "children": [  ],
+         "date_added": "13431527325063927",
+         "date_last_used": "0",
+         "date_modified": "0",
+         "guid": "4cf2e351-0e85-532b-bb37-df045d8f8d0f",
+         "id": "3",
+         "name": "Mobile bookmarks",
+         "type": "folder"
+      }
+   },
+   "version": 1
+}

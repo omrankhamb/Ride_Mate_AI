@@ -17,7 +17,7 @@ No KYC, payment gateway, admin dashboard, machine learning model, or production 
 ## Folder Structure
 
 ```text
-C:\Ai_mitra
+C:\Ride_Mate_AI
 ├── backend
 │   ├── data
 │   └── src
@@ -45,7 +45,7 @@ http://localhost:3000
 Open another terminal:
 
 ```bash
-cd C:\Ai_mitra\frontend
+cd C:\Ride_Mate_AI\frontend
 flutter run -d chrome --web-port=8080
 ```
 

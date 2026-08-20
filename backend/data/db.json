@@ -29,6 +29,46 @@
       "role": "RIDER",
       "createdAt": "2026-08-18T09:40:22.500Z",
       "updatedAt": "2026-08-18T09:40:22.500Z"
+    },
+    {
+      "id": "user_e202fca1-42ce-4277-9278-f67463abcd92",
+      "fullName": "Omprasad",
+      "mobileNumber": "Rankhamb",
+      "email": "omprasad.1251070156@vit.edu",
+      "passwordHash": "e6223eaca8301f6d9f377052a30509e7:40c043baa4d3ca8d9acc3c90c353deccb526bc2acb616e0382017fbf81073b93f5e6ef44c058bd3fb48e8601819d177bcaf7301b9c177ac760bfe2a7c37942f8",
+      "role": "RIDER",
+      "createdAt": "2026-08-18T10:18:58.777Z",
+      "updatedAt": "2026-08-18T10:18:58.777Z"
+    },
+    {
+      "id": "user_45214a53-86b1-4db3-abe5-4f86634f53cc",
+      "fullName": "Omprasad",
+      "mobileNumber": "8830316568",
+      "email": "omprasad.125107256@vit.edu",
+      "passwordHash": "6332a10a0791041118734b1161de3866:a570d71fe563cc55b864e4f03688cbb03745d03b91518ce5d03b8a8a0c352c532031603b6a38fa603fe8b656df1db45f728c3a4b0388e068b60bab8e95693040",
+      "role": "RIDER",
+      "createdAt": "2026-08-18T11:47:02.920Z",
+      "updatedAt": "2026-08-18T11:47:02.920Z"
+    },
+    {
+      "id": "user_6217d08d-341f-4883-bb2f-333ed1b0ea14",
+      "fullName": "omprasad",
+      "mobileNumber": "8830316568",
+      "email": "omprasad.125107056@vit.edu",
+      "passwordHash": "d08fcd4f76bf9cf746e651dbb56c5568:470f9fdebbab234c6d01bebd5bc818467602eb555cffbe5963c1df654564eb446d6da37f9e5bdbfbd5cb74656e768d0f0f6c73c156837ec2a48cef1a8171ba89",
+      "role": "RIDER",
+      "createdAt": "2026-08-18T11:52:32.174Z",
+      "updatedAt": "2026-08-18T11:52:32.174Z"
+    },
+    {
+      "id": "user_25532771-6bbd-4722-b23f-3c0188f50eb4",
+      "fullName": "omprasad",
+      "mobileNumber": "8830316568",
+      "email": "omprasad.51070256@vit.edu",
+      "passwordHash": "e7749825d5c21db1b9554cf3da584824:0d76a920a2f1713ac25878f56ac89eda06c022c63ae9c26f97c5c6837c0ed9fd3bcecb7b8f197757f3847948e0665bcd81ce8f11a161e050ea92c6f9c3c2a2c8",
+      "role": "DRIVER",
+      "createdAt": "2026-08-19T00:49:48.223Z",
+      "updatedAt": "2026-08-19T00:49:48.223Z"
     }
   ],
   "driverProfiles": [
@@ -45,6 +85,20 @@
       },
       "createdAt": "2026-08-18T09:31:48.407Z",
       "updatedAt": "2026-08-18T09:31:48.603Z"
+    },
+    {
+      "id": "driver_d322d3b4-25f5-4f93-8563-81fa5a95cc91",
+      "userId": "user_25532771-6bbd-4722-b23f-3c0188f50eb4",
+      "vehicleType": "E-Rickshaw",
+      "vehicleNumber": "MH2639",
+      "isOnline": true,
+      "lastLocation": {
+        "label": "Driver near demo pickup",
+        "lat": 18.5204,
+        "lng": 73.8567
+      },
+      "createdAt": "2026-08-19T00:49:48.223Z",
+      "updatedAt": "2026-08-19T00:50:04.215Z"
     }
   ],
   "rides": [
@@ -61,6 +115,20 @@
       "status": "MATCHED",
       "createdAt": "2026-08-18T09:31:48.699Z",
       "updatedAt": "2026-08-18T09:31:48.699Z"
+    },
+    {
+      "id": "ride_cd0c206c-be26-43fd-b166-4763f1d4495c",
+      "riderId": "user_815feaf1-4210-45f6-bac9-f493974f2510",
+      "driverId": "user_0a23a92c-b605-4710-b0df-611e711438d4",
+      "pickup": "VIT Pune, Bibwewadi",
+      "destination": "Swargate Bus Stand",
+      "coRiderPickupDistanceMeters": 700,
+      "estimatedFare": 86,
+      "etaMinutes": 6,
+      "otp": "5482",
+      "status": "MATCHED",
+      "createdAt": "2026-08-19T02:45:40.682Z",
+      "updatedAt": "2026-08-19T02:45:40.682Z"
     }
   ]
 }

@@ -1,37 +1,58 @@
-CREATE TABLE users (
-  id TEXT PRIMARY KEY,
-  full_name TEXT NOT NULL,
-  mobile_number TEXT NOT NULL,
-  email TEXT UNIQUE NOT NULL,
-  password_hash TEXT NOT NULL,
-  role TEXT NOT NULL CHECK (role IN ('RIDER', 'DRIVER')),
+CREATE TABLE IF NOT EXISTS users (
+  id VARCHAR(100) PRIMARY KEY,
+  full_name VARCHAR(255) NOT NULL,
+  mobile_number VARCHAR(20) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  role ENUM('RIDER', 'DRIVER') NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE driver_profiles (
-  id TEXT PRIMARY KEY,
-  user_id TEXT NOT NULL REFERENCES users(id),
-  vehicle_type TEXT NOT NULL,
-  vehicle_number TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS driver_profiles (
+  id VARCHAR(100) PRIMARY KEY,
+  user_id VARCHAR(100) NOT NULL,
+  vehicle_type VARCHAR(100) NOT NULL,
+  vehicle_number VARCHAR(100) NOT NULL,
   is_online BOOLEAN NOT NULL DEFAULT FALSE,
+  seats_available INT NOT NULL DEFAULT 3,
   last_latitude DECIMAL(10, 7),
   last_longitude DECIMAL(10, 7),
+  last_location_label VARCHAR(255),
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
-CREATE TABLE rides (
-  id TEXT PRIMARY KEY,
-  rider_id TEXT NOT NULL REFERENCES users(id),
-  driver_id TEXT REFERENCES users(id),
-  pickup TEXT NOT NULL,
-  destination TEXT NOT NULL,
+CREATE TABLE IF NOT EXISTS rides (
+  id VARCHAR(100) PRIMARY KEY,
+  rider_id VARCHAR(100) NOT NULL,
+  driver_id VARCHAR(100),
+  pool_group_id VARCHAR(100),
+  pickup VARCHAR(255) NOT NULL,
+  destination VARCHAR(255) NOT NULL,
+  pickup_lat DECIMAL(10, 7),
+  pickup_lng DECIMAL(10, 7),
+  destination_lat DECIMAL(10, 7),
+  destination_lng DECIMAL(10, 7),
   co_rider_pickup_distance_meters INTEGER,
   estimated_fare INTEGER,
   eta_minutes INTEGER,
-  otp TEXT NOT NULL,
-  status TEXT NOT NULL CHECK (status IN ('SEARCHING', 'MATCHED', 'ACCEPTED', 'STARTED', 'COMPLETED', 'CANCELLED')),
+  otp VARCHAR(10) NOT NULL,
+  status ENUM('SEARCHING', 'MATCHED', 'ACCEPTED', 'STARTED', 'COMPLETED', 'CANCELLED') NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (rider_id) REFERENCES users(id),
+  FOREIGN KEY (driver_id) REFERENCES users(id)
 );
+
+CREATE TABLE IF NOT EXISTS chat_messages (
+  id VARCHAR(100) PRIMARY KEY,
+  pool_group_id VARCHAR(100) NOT NULL,
+  sender_id VARCHAR(100) NOT NULL,
+  sender_name VARCHAR(100) NOT NULL,
+  message TEXT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX (pool_group_id)
+);
+

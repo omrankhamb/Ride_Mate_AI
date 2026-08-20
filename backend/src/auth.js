@@ -19,7 +19,8 @@ function createToken(user) {
     sub: user.id,
     role: user.role,
     name: user.fullName,
-    iat: Date.now()
+    iat: Date.now(),
+    exp: Date.now() + 24 * 60 * 60 * 1000 // 24 hours expiry
   });
   const signature = sign(`${header}.${payload}`);
 
@@ -44,7 +45,11 @@ function verifyToken(token) {
   }
 
   try {
-    return JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
+    const decoded = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
+    if (decoded.exp && Date.now() > decoded.exp) {
+      return null; // Token expired
+    }
+    return decoded;
   } catch {
     return null;
   }
