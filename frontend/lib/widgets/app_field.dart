@@ -2,48 +2,39 @@ part of ridemate_ai;
 
 class AppField extends StatelessWidget {
   const AppField({
-    required this.controller,
     required this.label,
-    required this.icon,
-    this.hint,
+    required this.controller,
+    this.icon,
     this.obscureText = false,
-    this.keyboardType,
-    this.minLength,
-    this.onChanged,
     super.key,
   });
 
-  final TextEditingController controller;
   final String label;
-  final IconData icon;
-  final String? hint;
+  final TextEditingController controller;
+  final IconData? icon;
   final bool obscureText;
-  final TextInputType? keyboardType;
-  final int? minLength;
-  final ValueChanged<String>? onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
+    return TextField(
       controller: controller,
       obscureText: obscureText,
-      keyboardType: keyboardType,
-      onChanged: onChanged,
+      style: const TextStyle(color: AppColors.ink),
       decoration: InputDecoration(
         labelText: label,
-        hintText: hint,
-        prefixIcon: Icon(icon),
+        labelStyle: const TextStyle(color: AppColors.muted),
+        prefixIcon: icon != null ? Icon(icon, color: AppColors.muted) : null,
+        filled: true,
+        fillColor: AppColors.cardAlt,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.primary),
+        ),
       ),
-      validator: (value) {
-        final text = value?.trim() ?? '';
-        if (text.isEmpty) {
-          return '$label is required';
-        }
-        if (minLength != null && text.length < minLength!) {
-          return '$label must be at least $minLength characters';
-        }
-        return null;
-      },
     );
   }
 }

@@ -1,0 +1,1 @@
+ C:\\Ride_Mate_AI\\frontend\\build\\web\\manifest.json:  C:\\Ride_Mate_AI\\frontend\\web\\index.html C:\\Ride_Mate_AI\\frontend\\web\\manifest.json

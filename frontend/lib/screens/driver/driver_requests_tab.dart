@@ -2,15 +2,13 @@ part of ridemate_ai;
 
 class _DriverRequestsTab extends StatelessWidget {
   const _DriverRequestsTab({
-    required this.rides,
-    required this.otpController,
+    required this.groups,
     required this.onRideAction,
     required this.onRefresh,
   });
 
-  final List<Ride> rides;
-  final TextEditingController otpController;
-  final Future<void> Function(Ride ride, String action, String? otp) onRideAction;
+  final List<List<Ride>> groups;
+  final Future<void> Function(List<Ride> rides, String action, String? otp) onRideAction;
   final VoidCallback onRefresh;
 
   @override
@@ -22,22 +20,20 @@ class _DriverRequestsTab extends StatelessWidget {
         children: [
           const _SectionTitle(
             title: 'Requests',
-            subtitle: 'Incoming ride cards with quick actions.',
+            subtitle: 'Incoming shared-ride requests.',
           ),
           const SizedBox(height: 12),
-          if (rides.isEmpty)
+          if (groups.isEmpty)
             const EmptyStateCard(
               title: 'No ride requests yet',
-              subtitle:
-                  'Rider requests will show here when they book your route.',
+              subtitle: 'Rider requests will show here when they book your route.',
             )
           else
-            ...rides.map(
-              (ride) => Padding(
+            ...groups.map(
+              (group) => Padding(
                 padding: const EdgeInsets.only(bottom: 12),
                 child: DriverRideActionCard(
-                  ride: ride,
-                  otpController: otpController,
+                  rides: group,
                   onAction: onRideAction,
                 ),
               ),

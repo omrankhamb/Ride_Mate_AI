@@ -23,7 +23,7 @@ class _DriverHomeState extends State<DriverHome> {
   String message = '';
   final otpController = TextEditingController();
   List<Ride> rides = [];
-  List<Ride> boardRides = [];
+  List<List<Ride>> boardGroups = [];
 
   Timer? _pollTimer;
   double currentLat = 18.5204;
@@ -46,7 +46,6 @@ class _DriverHomeState extends State<DriverHome> {
     if (activeRide != null) {
       final target = activeRide.status == 'ACCEPTED' ? activeRide.pickupLocation : activeRide.destinationLocation;
       if (target != null) {
-        // Move slightly towards target (simulating driving at ~30km/h -> ~0.0002 degrees per 3s tick)
         final dLat = target.latitude - currentLat;
         final dLng = target.longitude - currentLng;
         final dist = math.sqrt(dLat * dLat + dLng * dLng);
@@ -80,44 +79,43 @@ class _DriverHomeState extends State<DriverHome> {
   Future<void> loadRides() async {
     try {
       final data = await widget.api.driverRides();
-      
       final boardRes = await widget.api.get('/api/drivers/board');
       final rawBoard = boardRes['board'] as List;
       final boardData = rawBoard.map((group) {
-        final groupRides = (group as List).map((r) => Ride.fromJson(r)).toList();
-        return groupRides.first;
+        return (group as List).map((r) => Ride.fromJson(r)).toList();
       }).toList();
 
       if (!mounted) return;
-      setState(() {
-        rides = data;
-        boardRides = boardData;
-      });
-    } catch (_) {
-      if (!mounted) return;
-      setState(() {
-        rides = [];
-        boardRides = [];
-      });
-    }
+      
+      // Only call setState if data changed
+      bool ridesChanged = data.length != rides.length || 
+          (data.isNotEmpty && rides.isNotEmpty && data[0].status != rides[0].status);
+      bool boardChanged = boardData.length != boardGroups.length;
+
+      if (ridesChanged || boardChanged || rides.isEmpty && data.isNotEmpty) {
+        setState(() {
+          rides = data;
+          boardGroups = boardData;
+        });
+      }
+    } catch (_) {}
   }
 
-  Future<void> updateStatus(bool value) async {
-    setState(() {
-      loading = true;
-      message = '';
-    });
-
+  Future<void> updateStatus(bool val) async {
+    setState(() => loading = true);
     try {
       await widget.api.post('/api/drivers/status', {
-        'isOnline': value,
-        'locationLabel': 'Driver near demo pickup',
+        'isOnline': val,
+        'locationLabel': 'Current Location',
         'lat': currentLat,
         'lng': currentLng,
       });
       if (!mounted) return;
-      setState(() => online = value);
-      await loadRides();
+      setState(() {
+        online = val;
+        message = val ? 'You are online.' : 'You are offline.';
+      });
+      if (val) loadRides();
     } on ApiException catch (error) {
       if (!mounted) return;
       setState(() => message = error.message);
@@ -125,18 +123,16 @@ class _DriverHomeState extends State<DriverHome> {
       if (!mounted) return;
       setState(() => message = 'Could not update driver status.');
     } finally {
-      if (mounted) {
-        setState(() => loading = false);
-      }
+      if (mounted) setState(() => loading = false);
     }
   }
 
-  Future<void> rideAction(Ride ride, String action, String? otp) async {
+  Future<void> rideAction(String action, String? otp, {String? groupId, String? rideId}) async {
     try {
-      if (action == 'accept' && ride.poolGroupId != null) {
-        await widget.api.post('/api/rides/group/${ride.poolGroupId}/accept', {});
-      } else {
-        await widget.api.post('/api/rides/${ride.id}/$action', {
+      if (action == 'accept' && groupId != null) {
+        await widget.api.post('/api/rides/group/$groupId/accept', {});
+      } else if (rideId != null) {
+        await widget.api.post('/api/rides/$rideId/$action', {
           if (action == 'start') 'otp': otp,
         });
       }
@@ -158,23 +154,22 @@ class _DriverHomeState extends State<DriverHome> {
       _DriverLiveTab(
         user: widget.user,
         online: online,
-        loading: loading,
-        rides: rides,
-        otpController: otpController,
-        driverLat: currentLat,
-        driverLng: currentLng,
+        currentLocation: RideLocation(latitude: currentLat, longitude: currentLng, label: 'Driver'),
+        currentRides: rides,
+        groups: boardGroups,
         onToggleOnline: updateStatus,
-        onRefresh: loadRides,
-        onRideAction: rideAction,
+        onRideAction: (ridesList, action, otp) => rideAction(action, otp, groupId: ridesList.isNotEmpty ? ridesList[0].poolGroupId : null, rideId: ridesList.isNotEmpty ? ridesList[0].id : null),
       ),
       _DriverRequestsTab(
-        rides: boardRides,
-        otpController: otpController,
-        onRideAction: rideAction,
+        groups: boardGroups,
+        onRideAction: (ridesList, action, otp) => rideAction(action, otp, groupId: ridesList.isNotEmpty ? ridesList[0].poolGroupId : null, rideId: ridesList.isNotEmpty ? ridesList[0].id : null),
         onRefresh: loadRides,
       ),
       _DriverProfileTab(
-          user: widget.user, online: online, onLogout: widget.onLogout),
+        user: widget.user, 
+        online: online,
+        onLogout: widget.onLogout
+      ),
     ];
 
     return ThemedShell(
@@ -186,11 +181,9 @@ class _DriverHomeState extends State<DriverHome> {
         selectedIndex: tabIndex,
         onDestinationSelected: (value) => setState(() => tabIndex = value),
         destinations: const [
-          NavigationDestination(icon: Icon(Icons.home_outlined), label: 'Home'),
-          NavigationDestination(
-              icon: Icon(Icons.inbox_outlined), label: 'Requests'),
-          NavigationDestination(
-              icon: Icon(Icons.person_outline), label: 'Profile'),
+          NavigationDestination(icon: Icon(Icons.drive_eta_outlined), label: 'Live'),
+          NavigationDestination(icon: Icon(Icons.list_alt_outlined), label: 'Requests'),
+          NavigationDestination(icon: Icon(Icons.person_outline), label: 'Account'),
         ],
       ),
     );

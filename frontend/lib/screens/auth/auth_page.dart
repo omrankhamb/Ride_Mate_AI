@@ -1,172 +1,171 @@
 part of ridemate_ai;
 
 class AuthPage extends StatefulWidget {
-  const AuthPage({
-    required this.api,
-    required this.onLoggedIn,
-    this.onDemoRequested,
-    this.onAdminRequested,
-    super.key,
-  });
-
+  const AuthPage({required this.api, required this.onLoggedIn, super.key});
   final ApiClient api;
-  final void Function(String token, AppUser user) onLoggedIn;
-  final void Function(String role)? onDemoRequested;
-  final VoidCallback? onAdminRequested;
+  final void Function(String, AppUser) onLoggedIn;
 
   @override
   State<AuthPage> createState() => _AuthPageState();
 }
 
 class _AuthPageState extends State<AuthPage> {
-  final formKey = GlobalKey<FormState>();
-  final fullNameController = TextEditingController();
-  final mobileController = TextEditingController();
+  bool isLogin = true;
+  bool isDriver = false;
+  bool loading = false;
+  String? error;
+
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final nameController = TextEditingController();
+  final phoneController = TextEditingController();
+  final vehicleTypeController = TextEditingController();
   final vehicleNumberController = TextEditingController();
 
-  String role = 'RIDER';
-  String mode = 'login';
-  String vehicleType = 'Shared Auto';
-  String message = '';
-  bool loading = false;
-
-  bool get isSignup => mode == 'signup';
-  bool get isDriver => role == 'DRIVER';
-
-  @override
-  void dispose() {
-    fullNameController.dispose();
-    mobileController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    vehicleNumberController.dispose();
-    super.dispose();
-  }
-
   Future<void> submit() async {
-    if (!formKey.currentState!.validate()) {
-      return;
-    }
-
     setState(() {
       loading = true;
-      message = '';
+      error = null;
     });
-
+    
     try {
-      final payload = <String, dynamic>{
-        'role': role,
-        'email': emailController.text.trim(),
-        'password': passwordController.text,
-      };
-
-      if (isSignup) {
-        payload.addAll({
-          'fullName': fullNameController.text.trim(),
-          'mobileNumber': mobileController.text.trim(),
+      Map<String, dynamic> res;
+      if (isLogin) {
+        res = await widget.api.post('/api/auth/login', {
+          'email': emailController.text.trim(),
+          'password': passwordController.text,
+        });
+      } else {
+        res = await widget.api.post('/api/auth/signup', {
+          'fullName': nameController.text.trim(),
+          'mobileNumber': phoneController.text.trim(),
+          'email': emailController.text.trim(),
+          'password': passwordController.text,
+          'role': isDriver ? 'DRIVER' : 'RIDER',
+          if (isDriver) 'vehicleType': vehicleTypeController.text.trim(),
+          if (isDriver) 'vehicleNumber': vehicleNumberController.text.trim().toUpperCase(),
         });
       }
-
-      if (isSignup && isDriver) {
-        payload.addAll({
-          'vehicleType': vehicleType,
-          'vehicleNumber': vehicleNumberController.text.trim(),
-        });
-      }
-
-      final endpoint = isSignup ? '/api/auth/signup' : '/api/auth/login';
-      final data = await widget.api.post(endpoint, payload);
-      widget.onLoggedIn(
-        data['token'].toString(),
-        AppUser.fromJson(data['user'] as Map<String, dynamic>),
-      );
-    } on ApiException catch (error) {
-      setState(() => message = error.message);
-    } catch (_) {
-      setState(() => message = 'Could not connect to backend server.');
+      widget.onLoggedIn(res['token'], AppUser.fromJson(res['user']));
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() => error = e.message);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => error = 'Connection error. Please try again.');
     } finally {
-      if (mounted) {
-        setState(() => loading = false);
-      }
+      if (mounted) setState(() => loading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [AppColors.bg, AppColors.bgAlt],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: SafeArea(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final wide = constraints.maxWidth >= 980;
-              final hero = AuthHeroPanel(compact: !wide);
-              final form = AuthFormPanel(
-                formKey: formKey,
-                role: role,
-                mode: mode,
-                isSignup: isSignup,
-                isDriver: isDriver,
-                vehicleType: vehicleType,
-                message: message,
-                loading: loading,
-                fullNameController: fullNameController,
-                mobileController: mobileController,
-                emailController: emailController,
-                passwordController: passwordController,
-                vehicleNumberController: vehicleNumberController,
-                onRoleChanged: (value) => setState(() {
-                  role = value;
-                  message = '';
-                }),
-                onModeChanged: (value) => setState(() {
-                  mode = value;
-                  message = '';
-                }),
-                onVehicleTypeChanged: (value) =>
-                    setState(() => vehicleType = value),
-                onSubmit: submit,
-                onDemoRequested: widget.onDemoRequested,
-                onAdminRequested: widget.onAdminRequested,
-              );
-
-              if (wide) {
-                return Row(
-                  children: [
-                    Expanded(
-                      flex: 11,
-                      child: Padding(
-                          padding: const EdgeInsets.all(24), child: hero),
+      backgroundColor: AppColors.bg,
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 400),
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: AppColors.card,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: AppColors.line),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                )
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Icon(Icons.share_location_rounded, size: 64, color: AppColors.primary),
+                const SizedBox(height: 16),
+                Text(
+                  'RideMate AI',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.outfit(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.ink),
+                ),
+                Text(
+                  isLogin ? 'Welcome back' : 'Create an account',
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.outfit(fontSize: 16, color: AppColors.muted),
+                ),
+                const SizedBox(height: 32),
+                
+                if (error != null)
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    margin: const EdgeInsets.only(bottom: 24),
+                    decoration: BoxDecoration(
+                      color: AppColors.danger.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.danger.withOpacity(0.3)),
                     ),
-                    Expanded(
-                      flex: 9,
-                      child: Padding(
-                          padding: const EdgeInsets.all(24), child: form),
-                    ),
-                  ],
-                );
-              }
-
-              return ListView(
-                padding: const EdgeInsets.fromLTRB(16, 18, 16, 22),
-                children: [
-                  hero,
-                  const SizedBox(height: 18),
-                  form,
+                    child: Text(error!, style: const TextStyle(color: AppColors.danger)),
+                  ),
+                  
+                SegmentedSwitch(
+                  values: const ['login', 'signup'],
+                  labels: const ['Login', 'Sign Up'],
+                  selected: isLogin ? 'login' : 'signup',
+                  onChanged: (idx) => setState(() => isLogin = idx == 0),
+                ),
+                const SizedBox(height: 24),
+                
+                if (!isLogin) ...[
+                  AppField(label: 'Full Name', controller: nameController, icon: Icons.person_outline),
+                  const SizedBox(height: 16),
+                  AppField(label: 'Mobile Number', controller: phoneController, icon: Icons.phone_outlined),
+                  const SizedBox(height: 16),
+                  const Text('I want to join as a:', style: TextStyle(color: AppColors.muted, fontWeight: FontWeight.w600)),
+                  const SizedBox(height: 8),
+                  SegmentedSwitch(
+                    values: const ['rider', 'driver'],
+                    labels: const ['Rider', 'Driver'],
+                    selected: isDriver ? 'driver' : 'rider',
+                    onChanged: (idx) => setState(() => isDriver = idx == 1),
+                  ),
+                  const SizedBox(height: 16),
                 ],
-              );
-            },
+                
+                AppField(label: 'Email', controller: emailController, icon: Icons.email_outlined),
+                const SizedBox(height: 16),
+                AppField(label: 'Password', controller: passwordController, obscureText: true, icon: Icons.lock_outline),
+                const SizedBox(height: 16),
+                
+                if (!isLogin && isDriver) ...[
+                  AppField(label: 'Vehicle Type (e.g. Auto, Sedan)', controller: vehicleTypeController, icon: Icons.directions_car_outlined),
+                  const SizedBox(height: 16),
+                  AppField(label: 'Vehicle Number (e.g. MH12AB1234)', controller: vehicleNumberController, icon: Icons.numbers_outlined),
+                  const SizedBox(height: 16),
+                ],
+                
+                const SizedBox(height: 8),
+                ElevatedButton(
+                  onPressed: loading ? null : submit,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.bg,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    elevation: 0,
+                  ),
+                  child: loading
+                      ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.bg))
+                      : Text(isLogin ? 'Log In' : 'Sign Up', style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold)),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
+
+

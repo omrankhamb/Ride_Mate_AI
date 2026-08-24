@@ -4,130 +4,188 @@ class _DriverLiveTab extends StatelessWidget {
   const _DriverLiveTab({
     required this.user,
     required this.online,
-    required this.loading,
-    required this.rides,
-    required this.otpController,
-    required this.driverLat,
-    required this.driverLng,
+    required this.currentLocation,
+    required this.currentRides,
+    this.groups = const [],
     required this.onToggleOnline,
-    required this.onRefresh,
     required this.onRideAction,
   });
 
   final AppUser user;
   final bool online;
-  final bool loading;
-  final List<Ride> rides;
-  final TextEditingController otpController;
-  final double driverLat;
-  final double driverLng;
-  final Future<void> Function(bool value) onToggleOnline;
-  final VoidCallback onRefresh;
-  final Future<void> Function(Ride ride, String action, String? otp) onRideAction;
-
-  List<Ride> get activeRides {
-    return rides.where((r) => r.status != 'COMPLETED' && r.status != 'CANCELLED').toList();
-  }
+  final RideLocation? currentLocation;
+  final List<Ride> currentRides;
+  final List<List<Ride>> groups;
+  final ValueChanged<bool> onToggleOnline;
+  final Future<void> Function(List<Ride> rides, String action, String? otp) onRideAction;
 
   @override
   Widget build(BuildContext context) {
-    final firstName = user.fullName.split(' ').first;
-    final currentRides = activeRides;
-    final primaryRide = currentRides.isEmpty ? null : currentRides.first;
-
-    // Determine map pins based on primary ride status
-    RideLocation? targetLocation;
-    if (primaryRide != null) {
-      if (primaryRide.status == 'ACCEPTED') {
-        targetLocation = RideLocation(latitude: 0, longitude: 0, label: primaryRide.pickup);
-      } else if (primaryRide.status == 'STARTED') {
-        targetLocation = RideLocation(latitude: 0, longitude: 0, label: primaryRide.destination);
-      }
-    }
-
     return Stack(
       children: [
-        InteractiveRideMap(
-          pickup: targetLocation, // Render target as pickup for polyline
-          destination: null,
-          currentLocation: RideLocation(latitude: driverLat, longitude: driverLng, label: 'You'),
-          driverLocation: null,
-          selectingPickup: false,
-          onPointSelected: (_) {},
-          onUseCurrentLocation: () {},
-        ),
-        Positioned(
-          top: 48,
-          left: 16,
-          right: 16,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(20), boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)]),
-                child: Text(
-                  online ? 'Online' : 'Offline',
-                  style: TextStyle(color: online ? AppColors.primary : AppColors.muted, fontWeight: FontWeight.bold),
-                ),
-              ),
-              Switch(
-                value: online,
-                onChanged: loading ? null : (val) => onToggleOnline(val),
-                activeColor: AppColors.primary,
-              ),
-            ],
+        // 1. Full Screen Interactive Map with Auto, Pickup, Drop Pins & Polyline
+        Positioned.fill(
+          child: InteractiveRideMap(
+            rides: currentRides,
+            currentLocation: currentLocation,
+            driverLocation: currentLocation,
+            selectingPickup: false,
+            onPointSelected: (_) {},
+            onUseCurrentLocation: () {},
           ),
         ),
-        DraggableScrollableSheet(
-          initialChildSize: currentRides.isEmpty ? 0.2 : 0.45,
-          minChildSize: 0.15,
-          maxChildSize: 0.8,
-          builder: (context, scrollController) {
-            return Container(
-              decoration: const BoxDecoration(
-                color: AppColors.bg,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 2)],
-              ),
-              child: ListView(
-                controller: scrollController,
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                children: [
-                  Center(
-                    child: Container(
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: AppColors.line,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
+
+        // 2. Online / Offline Floating Switch at top-left
+        Positioned(
+          top: 14,
+          left: 14,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: AppColors.card.withValues(alpha: 0.95),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: AppColors.line),
+              boxShadow: const [BoxShadow(color: Colors.black38, blurRadius: 8)],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 9,
+                  height: 9,
+                  decoration: BoxDecoration(
+                    color: online ? AppColors.primary : AppColors.muted,
+                    shape: BoxShape.circle,
                   ),
-                  const SizedBox(height: 16),
-                  if (currentRides.isEmpty) ...[
-                    Center(
-                      child: Text(
-                        online ? 'Waiting for requests...' : 'Go online to start receiving rides',
-                        style: const TextStyle(color: AppColors.muted, fontSize: 16),
-                      ),
-                    ),
-                  ] else ...[
-                    Text('Active Rides (\${currentRides.length})', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.ink)),
-                    const SizedBox(height: 12),
-                    ...currentRides.map((ride) => Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: DriverRideActionCard(
-                            ride: ride,
-                            onAction: onRideAction,
-                          ),
-                        )),
-                  ],
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  online ? 'Online' : 'Offline',
+                  style: TextStyle(
+                    color: online ? AppColors.primary : AppColors.muted,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Switch(
+                  value: online,
+                  activeThumbColor: AppColors.primary,
+                  onChanged: onToggleOnline,
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        // 3. Navigation Status Badge at top-right
+        if (online && currentRides.isNotEmpty)
+          Positioned(
+            top: 14,
+            right: 14,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: const [BoxShadow(color: Colors.black38, blurRadius: 8)],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.navigation, color: AppColors.bg, size: 16),
+                  const SizedBox(width: 6),
+                  Text(
+                    currentRides[0].status == 'ACCEPTED' ? 'Head to Pickup' : 'En Route to Drop',
+                    style: const TextStyle(color: AppColors.bg, fontWeight: FontWeight.bold, fontSize: 12),
+                  ),
                 ],
               ),
-            );
-          },
-        ),
+            ),
+          ),
+
+        // 4. Clean Bottom Floating Navigation Card (Zero lag, always visible!)
+        if (online)
+          Positioned(
+            bottom: 12,
+            left: 12,
+            right: 12,
+            child: currentRides.isNotEmpty
+                ? Container(
+                    constraints: const BoxConstraints(maxHeight: 250),
+                    decoration: BoxDecoration(
+                      color: AppColors.card,
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+                      boxShadow: const [BoxShadow(color: Colors.black45, blurRadius: 14, offset: Offset(0, 4))],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(18),
+                      child: SingleChildScrollView(
+                        padding: const EdgeInsets.all(12),
+                        child: DriverRideActionCard(
+                          rides: currentRides,
+                          onAction: onRideAction,
+                        ),
+                      ),
+                    ),
+                  )
+                : (groups.isNotEmpty
+                    ? Container(
+                        constraints: const BoxConstraints(maxHeight: 320),
+                        decoration: BoxDecoration(
+                          color: AppColors.card.withValues(alpha: 0.98),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: AppColors.line),
+                          boxShadow: const [BoxShadow(color: Colors.black45, blurRadius: 16, offset: Offset(0, 4))],
+                        ),
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.all(14),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Incoming Requests (${groups.length})', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.primary)),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                    decoration: BoxDecoration(color: AppColors.primary.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(10)),
+                                    child: const Text('Live', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 11)),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 10),
+                              ...groups.map((group) => Padding(
+                                padding: const EdgeInsets.only(bottom: 8),
+                                child: DriverRideActionCard(
+                                  rides: group,
+                                  onAction: onRideAction,
+                                ),
+                              )),
+                            ],
+                          ),
+                        ),
+                      )
+                    : Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: AppColors.card.withValues(alpha: 0.95),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: AppColors.line),
+                          boxShadow: const [BoxShadow(color: Colors.black26, blurRadius: 8)],
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.radar, color: AppColors.primary, size: 20),
+                            SizedBox(width: 10),
+                            Text('Waiting for Shared Ride Requests...', style: TextStyle(color: AppColors.ink, fontWeight: FontWeight.bold, fontSize: 13)),
+                          ],
+                        ),
+                      )),
+          ),
       ],
     );
   }

@@ -27,10 +27,10 @@ class RideMatch {
         pickup: json['pickup']?.toString() ?? 'Unknown',
         destination: json['destination']?.toString() ?? 'Unknown',
         pickupDistanceMeters:
-            (json['pickupDistanceMeters'] as num?)?.round() ?? 0,
+            int.tryParse(json['pickupDistanceMeters']?.toString() ?? '0') ?? (double.tryParse(json['pickupDistanceMeters']?.toString() ?? '0')?.round() ?? 0),
         destinationDistanceMeters:
-            (json['destinationDistanceMeters'] as num?)?.round() ?? 0,
-        matchScore: (json['matchScore'] as num?)?.round() ?? 0,
+            int.tryParse(json['destinationDistanceMeters']?.toString() ?? '0') ?? (double.tryParse(json['destinationDistanceMeters']?.toString() ?? '0')?.round() ?? 0),
+        matchScore: int.tryParse(json['matchScore']?.toString() ?? '0') ?? (double.tryParse(json['matchScore']?.toString() ?? '0')?.round() ?? 0),
         poolGroupId: json['poolGroupId']?.toString() ?? json['rideId'].toString(),
       );
 }

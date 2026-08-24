@@ -259,6 +259,7 @@ async function enrichRide(ride) {
     destinationLocation: ride.destination_lat ? { lat: ride.destination_lat, lng: ride.destination_lng } : null,
     coRiderPickupDistanceMeters: ride.co_rider_pickup_distance_meters,
     estimatedFare: ride.estimated_fare,
+    fareShare: ride.fare_share,
     etaMinutes: ride.eta_minutes,
     otp: ride.otp,
     status: ride.status,
@@ -414,7 +415,24 @@ async function handleApi(req, res) {
         return sendJson(res, 401, { success: false, message: "Invalid email or password." });
       }
 
+            if (user.role === "DRIVER") {
+        await pool.query('UPDATE rides SET status = "COMPLETED" WHERE driver_id = ? AND status IN ("ACCEPTED", "STARTED")', [user.id]);
+      }
+
       sendJson(res, 200, { success: true, message: "Login successful.", token: createToken(user), user: cleanUser(user) });
+      return;
+    }
+
+        if (method === "POST" && url.pathname === "/api/auth/logout") {
+      const user = await requireUser(req, res);
+      if (!user) return;
+      
+      if (user.role === "DRIVER") {
+        await pool.query('UPDATE rides SET status = "COMPLETED" WHERE driver_id = ? AND status IN ("ACCEPTED", "STARTED")', [user.id]);
+        await pool.query('UPDATE driver_profiles SET is_online = 0 WHERE user_id = ?', [user.id]);
+      }
+      
+      sendJson(res, 200, { success: true, message: "Logged out successfully." });
       return;
     }
 
@@ -446,8 +464,15 @@ async function handleApi(req, res) {
       if (!user) return;
       if (user.role !== "DRIVER") return sendJson(res, 403, { success: false, message: "Only drivers can see driver rides." });
 
-      const [rides] = await pool.query('SELECT * FROM rides WHERE driver_id = ? AND status != ?', [user.id, 'COMPLETED']);
-      const enrichedRides = await Promise.all(rides.map(r => enrichRide(r)));
+      const [rides] = await pool.query('SELECT * FROM rides WHERE driver_id = ? AND status IN ("ACCEPTED", "STARTED") ORDER BY created_at DESC', [user.id]);
+      if (rides.length === 0) {
+        return sendJson(res, 200, { success: true, rides: [] });
+      }
+      
+      const activeGroupId = rides[0].pool_group_id || rides[0].id;
+      const groupRides = rides.filter(r => (r.pool_group_id || r.id) === activeGroupId);
+      
+      const enrichedRides = await Promise.all(groupRides.map(r => enrichRide(r)));
       sendJson(res, 200, { success: true, rides: enrichedRides });
       return;
     }
@@ -475,7 +500,7 @@ async function handleApi(req, res) {
       const user = await requireUser(req, res);
       if (!user) return;
       
-      const [rides] = await pool.query('SELECT * FROM rides WHERE status = "SEARCHING"');
+      const [rides] = await pool.query('SELECT * FROM rides WHERE status IN ("POOLED", "SEARCHING") AND driver_id IS NULL ORDER BY created_at DESC');
       const enriched = await Promise.all(rides.map(r => enrichRide(r)));
       
       const grouped = {};
@@ -494,7 +519,7 @@ async function handleApi(req, res) {
       if (user.role !== "DRIVER") return sendJson(res, 403, { success: false, message: "Only drivers can accept." });
 
       const groupId = url.pathname.split("/")[4];
-      const [rides] = await pool.query('SELECT * FROM rides WHERE pool_group_id = ? AND status = "SEARCHING"', [groupId]);
+      const [rides] = await pool.query('SELECT * FROM rides WHERE (pool_group_id = ? OR id = ?) AND status IN ("POOLED", "SEARCHING") AND driver_id IS NULL', [groupId, groupId]);
       if (rides.length === 0) return sendJson(res, 404, { success: false, message: "Group not found or already accepted." });
       
       for (const r of rides) {
@@ -513,19 +538,70 @@ async function handleApi(req, res) {
       if (!user) return;
       const payload = await parseBody(req);
       const excludeRideId = payload.excludeRideId;
-      // Auto matching removed for manual P2P matching
+      const [searchingRides] = await pool.query('SELECT * FROM rides WHERE status = "SEARCHING" AND id != ? AND rider_id != ?', [excludeRideId, user.id]);
+      const matches = [];
+      for (const r of searchingRides) {
+         if (r.pickup_lat && payload.pickup && r.destination_lat && payload.destination) {
+             const pDistKm = calculateDistanceKm(payload.pickup.lat, payload.pickup.lng, r.pickup_lat, r.pickup_lng);
+             const dDistKm = calculateDistanceKm(payload.destination.lat, payload.destination.lng, r.destination_lat, r.destination_lng);
+             if (pDistKm <= 5.0 && dDistKm <= 5.0) {
+               const score = Math.max(0, Math.round(100 - ((pDistKm + dDistKm) * 10)));
+               const [riders] = await pool.query('SELECT full_name FROM users WHERE id = ?', [r.rider_id]);
+               matches.push({
+                 rideId: r.id, riderId: r.rider_id, riderName: riders.length > 0 ? riders[0].full_name.split(' ')[0] : 'Someone',
+                 pickupDistanceMeters: Math.round(pDistKm * 1000), destinationDistanceMeters: Math.round(dDistKm * 1000),
+                 matchScore: score, poolGroupId: r.pool_group_id,
+                 pickup: r.pickup_label || r.pickup, destination: r.destination_label || r.destination
+               });
+             }
          }
       }
       sendJson(res, 200, { success: true, matches });
       return;
     }
 
-    if (method === "POST" && url.pathname === "/api/rides/connect") {
+    
+    if (method === "POST" && url.pathname === "/api/rides/share_confirm") {
       const user = await requireUser(req, res);
       if (!user) return;
       const payload = await parseBody(req);
       const myRideId = payload.myRideId;
-      const targetRideId = payload.targetGroupId;
+      const targetRideId = payload.targetRideId;
+      
+      const [rides] = await pool.query('SELECT * FROM rides WHERE id IN (?, ?)', [myRideId, targetRideId]);
+      if (rides.length !== 2) return sendJson(res, 404, { success: false, message: "Rides not found." });
+      
+      const r1 = rides[0];
+      const r2 = rides[1];
+      const groupId = r1.pool_group_id || r2.pool_group_id || createId("group");
+      
+      const totalFare = parseFloat(r1.estimated_fare) + parseFloat(r2.estimated_fare);
+      const split = (totalFare / 2).toFixed(2);
+      
+      await pool.query('UPDATE rides SET pool_group_id = ?, status = "POOLED", fare_share = ? WHERE id IN (?, ?)', [groupId, split, myRideId, targetRideId]);
+      await pool.query('UPDATE corider_requests SET shared_confirmed = TRUE, status = "ACCEPTED", matched_at = NOW() WHERE (sender_ride_id = ? AND receiver_ride_id = ?) OR (sender_ride_id = ? AND receiver_ride_id = ?)', [myRideId, targetRideId, targetRideId, myRideId]);
+      
+      const [updated] = await pool.query('SELECT * FROM rides WHERE pool_group_id = ?', [groupId]);
+      for (const r of updated) {
+         const enriched = await enrichRide(r);
+         broadcastRideUpdate(r.id, enriched);
+      }
+      return sendJson(res, 200, { success: true, message: "Ride confirmed and shared!" });
+    }
+if (method === "POST" && url.pathname === "/api/rides/connect") {
+      const user = await requireUser(req, res);
+      if (!user) return;
+      const payload = await parseBody(req);
+      const myRideId = payload.myRideId;
+      let targetRideId = payload.targetGroupId || payload.targetRideId;
+      
+      if (targetRideId && targetRideId.startsWith('group_')) {
+        const [grRides] = await pool.query('SELECT id FROM rides WHERE pool_group_id = ? AND id != ? LIMIT 1', [targetRideId, myRideId]);
+        if (grRides.length > 0) targetRideId = grRides[0].id;
+      }
+      
+      // Delete any duplicate old pending requests between these two
+      await pool.query('DELETE FROM corider_requests WHERE (sender_ride_id = ? AND receiver_ride_id = ?) OR (sender_ride_id = ? AND receiver_ride_id = ?)', [myRideId, targetRideId, targetRideId, myRideId]);
       
       await pool.query(
         'INSERT INTO corider_requests (sender_ride_id, receiver_ride_id, status) VALUES (?, ?, ?)',
@@ -541,46 +617,19 @@ async function handleApi(req, res) {
       const payload = await parseBody(req);
       const { requestId, action } = payload;
       
+      const [reqs] = await pool.query('SELECT * FROM corider_requests WHERE id = ?', [requestId]);
+      if (reqs.length === 0) return sendJson(res, 404, { success: false, message: "Request not found." });
+      const crReq = reqs[0];
+
       if (action === 'accept') {
-        const [reqs] = await pool.query('SELECT * FROM corider_requests WHERE id = ?', [requestId]);
-        if (reqs.length > 0) {
-          const r = reqs[0];
-          const [senders] = await pool.query('SELECT pool_group_id FROM rides WHERE id = ?', [r.sender_ride_id]);
-          if (senders.length > 0) {
-             const groupId = senders[0].pool_group_id;
-             await pool.query('UPDATE rides SET pool_group_id = ? WHERE id = ?', [groupId, r.receiver_ride_id]);
-          }
+        const [senderRides] = await pool.query('SELECT pool_group_id FROM rides WHERE id = ?', [crReq.sender_ride_id]);
+        if (senderRides.length > 0) {
+          const groupId = senderRides[0].pool_group_id;
+          await pool.query('UPDATE rides SET pool_group_id = ? WHERE id = ?', [groupId, crReq.receiver_ride_id]);
         }
-        await pool.query('UPDATE corider_requests SET status = ? WHERE id = ?', ['ACCEPTED', requestId]);
+        await pool.query('UPDATE corider_requests SET status = "ACCEPTED" WHERE id = ?', [requestId]);
       } else {
-        await pool.query('UPDATE corider_requests SET status = ? WHERE id = ?', ['REJECTED', requestId]);
-      }
-      sendJson(res, 200, { success: true, message: "Responded" });
-      return;
-    });
-      return;
-    }
-    
-    if (method === "POST" && url.pathname === "/api/rides/corider_respond") {
-      const user = await requireUser(req, res);
-      if (!user) return;
-      const payload = await parseBody(req);
-      const { requestId, action } = payload;
-      
-      if (action === 'accept') {
-        const [reqs] = await pool.query('SELECT * FROM corider_requests WHERE id = ?', [requestId]);
-        if (reqs.length > 0) {
-          const r = reqs[0];
-          // Get sender's pool_group_id
-          const [senders] = await pool.query('SELECT pool_group_id FROM rides WHERE id = ?', [r.sender_ride_id]);
-          if (senders.length > 0) {
-             const groupId = senders[0].pool_group_id;
-             await pool.query('UPDATE rides SET pool_group_id = ? WHERE id = ?', [groupId, r.receiver_ride_id]);
-          }
-        }
-        await pool.query('UPDATE corider_requests SET status = ? WHERE id = ?', ['ACCEPTED', requestId]);
-      } else {
-        await pool.query('UPDATE corider_requests SET status = ? WHERE id = ?', ['REJECTED', requestId]);
+        await pool.query('UPDATE corider_requests SET status = "REJECTED" WHERE id = ?', [requestId]);
       }
       sendJson(res, 200, { success: true, message: "Responded" });
       return;
@@ -650,16 +699,43 @@ if (method === "POST" && url.pathname === "/api/rides/request") {
 
       let newStatus = ride.status;
 
-      if (action === "accept" && user.role === "DRIVER") {
+            if (action === "accept" && user.role === "DRIVER") {
         if (ride.status !== "MATCHED" && ride.status !== "SEARCHING") return sendJson(res, 400, { success: false, message: "Ride cannot be accepted in its current state." });
         newStatus = "ACCEPTED";
       } else if (action === "start" && user.role === "DRIVER") {
         if (ride.status !== "ACCEPTED") return sendJson(res, 400, { success: false, message: "Ride must be accepted before starting." });
         const payload = await parseBody(req);
-        if (String(payload.otp) !== String(ride.otp)) return sendJson(res, 400, { success: false, message: "Incorrect OTP." });
+        const otpStr = String(payload.otp || "").trim();
+        
+        let validOtp = (otpStr === String(ride.otp));
+        if (!validOtp && ride.pool_group_id) {
+          const [grRides] = await pool.query('SELECT * FROM rides WHERE pool_group_id = ? AND otp = ?', [ride.pool_group_id, otpStr]);
+          if (grRides.length > 0) validOtp = true;
+        }
+        
+        if (!validOtp) return sendJson(res, 400, { success: false, message: "Incorrect OTP." });
+        
+        if (ride.pool_group_id) {
+          await pool.query('UPDATE rides SET status = "STARTED" WHERE pool_group_id = ?', [ride.pool_group_id]);
+          const [updated] = await pool.query('SELECT * FROM rides WHERE pool_group_id = ?', [ride.pool_group_id]);
+          for (const r of updated) {
+            const en = await enrichRide(r);
+            broadcastRideUpdate(r.id, en);
+          }
+          return sendJson(res, 200, { success: true, message: "Trip started for group." });
+        }
         newStatus = "STARTED";
       } else if (action === "complete" && user.role === "DRIVER") {
         if (ride.status !== "STARTED") return sendJson(res, 400, { success: false, message: "Only started rides can be completed." });
+        if (ride.pool_group_id) {
+          await pool.query('UPDATE rides SET status = "COMPLETED" WHERE pool_group_id = ?', [ride.pool_group_id]);
+          const [updated] = await pool.query('SELECT * FROM rides WHERE pool_group_id = ?', [ride.pool_group_id]);
+          for (const r of updated) {
+            const en = await enrichRide(r);
+            broadcastRideUpdate(r.id, en);
+          }
+          return sendJson(res, 200, { success: true, message: "Trip completed for group." });
+        }
         newStatus = "COMPLETED";
       } else if (action === "cancel") {
         if (ride.status === "COMPLETED" || ride.status === "CANCELLED") return sendJson(res, 400, { success: false, message: "Ride cannot be cancelled." });

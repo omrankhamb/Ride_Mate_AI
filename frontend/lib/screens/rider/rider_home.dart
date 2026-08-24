@@ -38,6 +38,7 @@ class _RiderHomeState extends State<RiderHome> {
   Ride? activeRide;
   List<Map<String, dynamic>> pendingRequests = [];
   StreamSubscription<Ride>? _rideSubscription;
+  Timer? _pollTimer;
 
   @override
   void initState() {
@@ -45,11 +46,20 @@ class _RiderHomeState extends State<RiderHome> {
     loadDrivers();
     loadRides();
     useCurrentLocation(silent: true);
+    _pollTimer = Timer.periodic(const Duration(seconds: 2), (_) {
+      if (mounted) {
+        loadRides();
+        if (activeRide != null && activeRide!.status == 'SEARCHING') {
+          loadNearbyMatches();
+        }
+      }
+    });
   }
 
   @override
   void dispose() {
     _rideSubscription?.cancel();
+    // _pollTimer stays active
     pickupController.dispose();
     destinationController.dispose();
     super.dispose();
@@ -91,6 +101,7 @@ class _RiderHomeState extends State<RiderHome> {
 
   void _subscribeToActiveRide() {
     _rideSubscription?.cancel();
+    // _pollTimer stays active
     if (activeRide != null) {
       _rideSubscription = widget.api.sseListenToRide(activeRide!.id).listen((updatedRide) {
         if (mounted) {
@@ -151,7 +162,7 @@ class _RiderHomeState extends State<RiderHome> {
     }
   }
 
-  Future<void> respondToRequest(int requestId, String action) async {
+  Future<void> respondToRequest(String requestId, String action) async {
     try {
       await widget.api.respondToCoriderRequest(requestId, action);
       loadRides();
@@ -243,7 +254,7 @@ class _RiderHomeState extends State<RiderHome> {
     try {
       await widget.api.connectRide(
         myRideId: activeRide!.id,
-        targetGroupId: match.poolGroupId,
+        targetGroupId: match.rideId,
       );
       setState(() => message = 'Connected to shared ride!');
       await loadRides();
@@ -274,13 +285,14 @@ class _RiderHomeState extends State<RiderHome> {
         onSetDestination: setDestination,
         onMapPoint: setMapPoint,
         onUseCurrentLocation: useCurrentLocation,
-        onSelectMapMode: (value) => setState(() => selectingPickup = value),
+        onSelectMapMode: (value) => setState(() => selectingPickup = value as bool),
         onBook: requestRide,
         onOpenMap: () => setState(() => tabIndex = 1),
         onRefresh: () {
           loadDrivers();
           loadRides();
         },
+        
       ),
       _RiderMapTab(
         activeRide: activeRide,
@@ -296,15 +308,12 @@ class _RiderHomeState extends State<RiderHome> {
         pendingRequests: pendingRequests,
         onRespondRequest: respondToRequest,
         onPointSelected: setMapPoint,
-        onSelectMapMode: (value) => setState(() => selectingPickup = value),
+        onSelectMapMode: (value) => setState(() => selectingPickup = value as bool),
         onUseCurrentLocation: useCurrentLocation,
         onConnectMatch: connectToRide,
         onBook: requestRide,
         onCancel: cancelRide,
-        onRefresh: () {
-          loadNearbyMatches();
-          loadRides();
-        },
+        
       ),
       _RiderTripsTab(rides: rides, onRefresh: loadRides),
       _RiderProfileTab(

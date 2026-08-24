@@ -61,8 +61,14 @@ class _DriverProfileTab extends StatelessWidget {
               const SizedBox(height: 14),
               ElevatedButton.icon(
                 onPressed: onLogout,
-                icon: const Icon(Icons.person_rounded),
-                label: const Text('Open rider demo'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.danger.withValues(alpha: 0.15),
+                  foregroundColor: AppColors.danger,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                icon: const Icon(Icons.logout, size: 20),
+                label: const Text('Log out of Driver Account', style: TextStyle(fontWeight: FontWeight.bold)),
               ),
             ],
           ),

@@ -32,7 +32,7 @@ class _RiderTripsTab extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 12),
                 child: RideHistoryCard(
                   ride: ride,
-                  onTap: () => showRideDetails(context, ride),
+                  
                 ),
               ),
             ),

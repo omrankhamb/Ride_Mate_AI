@@ -13,6 +13,8 @@ class Ride {
     required this.coRiderPickupDistanceMeters,
     required this.estimatedFare,
     this.etaMinutes,
+    this.fareShare,
+    this.createdAt,
     this.rider,
     this.driver,
     this.driverProfile,
@@ -31,6 +33,8 @@ class Ride {
   final int coRiderPickupDistanceMeters;
   final int estimatedFare;
   final int? etaMinutes;
+  final double? fareShare;
+  final String? createdAt;
   final AppUser? rider;
   final AppUser? driver;
   final Map<String, dynamic>? driverProfile;
@@ -53,6 +57,10 @@ class Ride {
       etaMinutes: json['etaMinutes'] == null
           ? null
           : int.tryParse(json['etaMinutes'].toString()),
+      fareShare: json['fareShare'] == null
+          ? null
+          : double.tryParse(json['fareShare'].toString()),
+      createdAt: json['createdAt']?.toString(),
       rider: json['rider'] == null
           ? null
           : AppUser.fromJson(json['rider'] as Map<String, dynamic>),

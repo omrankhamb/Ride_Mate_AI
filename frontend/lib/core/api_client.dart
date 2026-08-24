@@ -58,7 +58,19 @@ class ApiClient {
     return {'rides': rides, 'pendingRequests': pendingRequests.cast<Map<String, dynamic>>()};
   }
 
-  Future<void> respondToCoriderRequest(int requestId, String action) async {
+  
+  Future<void> shareConfirmRide(String myRideId, String targetRideId) async {
+    await post('/api/rides/share_confirm', {
+      'myRideId': myRideId,
+      'targetRideId': targetRideId,
+    });
+  }
+
+  Future<List<Ride>> getGroupDetails(String groupId) async {
+    final res = await get('/api/rides/group/$groupId/details');
+    return (res['rides'] as List).map((r) => Ride.fromJson(r)).toList();
+  }
+  Future<void> respondToCoriderRequest(String requestId, String action) async {
     await post('/api/rides/corider_respond', {
       'requestId': requestId,
       'action': action,

@@ -2,87 +2,98 @@ part of ridemate_ai;
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({
-    Key? key,
     required this.poolGroupId,
     required this.api,
     required this.user,
-  }) : super(key: key);
+    this.targetRideId,
+    this.myRideId,
+    this.coRiderName,
+    this.matchScore,
+    this.destinationLabel,
+    this.routeDistanceKm,
+    super.key,
+  });
 
   final String poolGroupId;
   final ApiClient api;
   final AppUser user;
+  final String? targetRideId;
+  final String? myRideId;
+  final String? coRiderName;
+  final int? matchScore;
+  final String? destinationLabel;
+  final double? routeDistanceKm;
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final TextEditingController _controller = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
-  List<Map<String, dynamic>> _messages = [];
-  bool _loading = false;
-  Timer? _pollingTimer;
+  final _controller = TextEditingController();
+  final _scrollController = ScrollController();
+  List<dynamic> messages = [];
+  Timer? _timer;
+  bool sharing = false;
 
   @override
   void initState() {
     super.initState();
-    _fetchMessages();
-    _pollingTimer = Timer.periodic(const Duration(seconds: 3), (_) {
-      _fetchMessages();
-    });
+    _fetch();
+    _timer = Timer.periodic(const Duration(seconds: 3), (_) => _fetch());
   }
 
   @override
   void dispose() {
-    _pollingTimer?.cancel();
+    _timer?.cancel();
     _controller.dispose();
     _scrollController.dispose();
     super.dispose();
   }
 
-  Future<void> _fetchMessages() async {
+  Future<void> _fetch() async {
     try {
-      final msgs = await widget.api.getChatMessages(widget.poolGroupId);
-      if (mounted) {
-        setState(() {
-          _messages = msgs;
-        });
-        _scrollToBottom();
-      }
-    } catch (e) {
-      // Ignore
-    }
-  }
-
-  Future<void> _sendMessage() async {
-    final text = _controller.text.trim();
-    if (text.isEmpty) return;
-
-    setState(() => _loading = true);
-    try {
-      await widget.api.sendChatMessage(widget.poolGroupId, text);
-      _controller.clear();
-      await _fetchMessages();
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to send message: $e')),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() => _loading = false);
-      }
-    }
+      final res = await widget.api.get('/api/chat/${widget.poolGroupId}');
+      if (!mounted) return;
+      setState(() => messages = res['messages']);
+      _scrollToBottom();
+    } catch (_) {}
   }
 
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
+        _scrollController.position.maxScrollExtent + 100,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeOut,
       );
+    }
+  }
+
+  Future<void> _send() async {
+    final text = _controller.text.trim();
+    if (text.isEmpty) return;
+    _controller.clear();
+
+    try {
+      await widget.api.post('/api/chat', {
+        'poolGroupId': widget.poolGroupId,
+        'message': text,
+      });
+      await _fetch();
+    } catch (_) {}
+  }
+
+  Future<void> _shareRide() async {
+    if (widget.myRideId == null || widget.targetRideId == null) return;
+    setState(() => sharing = true);
+    try {
+      await widget.api.shareConfirmRide(widget.myRideId!, widget.targetRideId!);
+      if (!mounted) return;
+      Navigator.pop(context, true);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to share: ' + e.toString())));
+      setState(() => sharing = false);
     }
   }
 
@@ -91,62 +102,102 @@ class _ChatScreenState extends State<ChatScreen> {
     return Scaffold(
       backgroundColor: AppColors.bg,
       appBar: AppBar(
-        title: const Text('Co-rider Chat', style: TextStyle(color: AppColors.ink)),
-        backgroundColor: AppColors.card,
-        iconTheme: const IconThemeData(color: AppColors.ink),
-        elevation: 1,
+        backgroundColor: AppColors.bg,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppColors.ink),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                'Matched with ${(widget.coRiderName ?? 'Co-rider')}',
+                style: GoogleFonts.outfit(color: AppColors.ink, fontWeight: FontWeight.bold, fontSize: 18),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Text(
+                '${widget.matchScore}% route match',
+                style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 12),
+              ),
+            )
+          ],
+        ),
       ),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: CardSurface(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: AppColors.primary,
+                      radius: 24,
+                      child: Text(
+                        (widget.coRiderName ?? 'Co-rider').isNotEmpty ? (widget.coRiderName ?? 'Co-rider')[0].toUpperCase() : '?',
+                        style: const TextStyle(color: AppColors.bg, fontWeight: FontWeight.bold, fontSize: 20),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            (widget.coRiderName ?? 'Co-rider'),
+                            style: const TextStyle(color: AppColors.ink, fontWeight: FontWeight.bold, fontSize: 16),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Also headed to ${widget.destinationLabel} · ${(widget.routeDistanceKm ?? 0).toStringAsFixed(1)} km route',
+                            style: const TextStyle(color: AppColors.muted, fontSize: 13),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
               padding: const EdgeInsets.all(16),
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                final msg = _messages[index];
-                final isMe = msg['senderId'] == widget.user.id;
-                final senderName = msg['senderName'] ?? 'Unknown';
-                final text = msg['message'] ?? '';
-
+              itemCount: messages.length,
+              itemBuilder: (context, i) {
+                final m = messages[i];
+                final isMe = m['senderId'] == widget.user.id;
                 return Align(
                   alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
                   child: Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    constraints: BoxConstraints(
-                      maxWidth: MediaQuery.of(context).size.width * 0.75,
-                    ),
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     decoration: BoxDecoration(
-                      color: isMe ? AppColors.primary : AppColors.cardAlt,
-                      borderRadius: BorderRadius.circular(16).copyWith(
-                        bottomRight: isMe ? const Radius.circular(0) : null,
-                        bottomLeft: !isMe ? const Radius.circular(0) : null,
+                      color: isMe ? AppColors.primary : AppColors.card,
+                      borderRadius: BorderRadius.only(
+                        topLeft: const Radius.circular(16),
+                        topRight: const Radius.circular(16),
+                        bottomLeft: Radius.circular(isMe ? 16 : 0),
+                        bottomRight: Radius.circular(isMe ? 0 : 16),
                       ),
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (!isMe)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 4),
-                            child: Text(
-                              senderName,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.muted,
-                              ),
-                            ),
-                          ),
-                        Text(
-                          text,
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: isMe ? AppColors.bg : Colors.white,
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      m['message'] ?? '',
+                      style: TextStyle(
+                        color: isMe ? AppColors.bg : AppColors.ink,
+                      ),
                     ),
                   ),
                 );
@@ -154,52 +205,73 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ),
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(16),
             decoration: const BoxDecoration(
-              color: AppColors.card,
+              color: AppColors.bg,
               border: Border(top: BorderSide(color: AppColors.line)),
             ),
-            child: SafeArea(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _controller,
-                      decoration: InputDecoration(
-                        hintText: 'Type a message...',
-                        hintStyle: const TextStyle(color: AppColors.muted),
-                        filled: true,
-                        fillColor: AppColors.bg,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(24),
-                          borderSide: BorderSide.none,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _controller,
+                        style: const TextStyle(color: AppColors.ink),
+                        decoration: InputDecoration(
+                          hintText: 'Type a message...',
+                          hintStyle: const TextStyle(color: AppColors.muted),
+                          filled: true,
+                          fillColor: AppColors.card,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: const BorderSide(color: AppColors.line),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: const BorderSide(color: AppColors.line),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: const BorderSide(color: AppColors.primary),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
-                      onSubmitted: (_) => _sendMessage(),
-                      style: const TextStyle(color: AppColors.ink),
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  GestureDetector(
-                    onTap: _loading ? null : _sendMessage,
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: const BoxDecoration(
-                        color: AppColors.primary,
+                    const SizedBox(width: 8),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.primary.withOpacity(0.15),
                         shape: BoxShape.circle,
                       ),
-                      child: _loading
-                          ? const SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(color: AppColors.bg, strokeWidth: 2),
-                            )
-                          : const Icon(Icons.send, color: AppColors.bg, size: 24),
+                      child: IconButton(
+                        icon: const Icon(Icons.send, color: AppColors.primary),
+                        onPressed: _send,
+                      ),
                     ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: sharing ? null : _shareRide,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: AppColors.bg,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    elevation: 0,
                   ),
-                ],
-              ),
+                  child: sharing
+                      ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: AppColors.bg, strokeWidth: 2))
+                      : Text(
+                          'Share This Ride with ${(widget.coRiderName ?? 'Co-rider')}',
+                          style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                ),
+              ],
             ),
           ),
         ],

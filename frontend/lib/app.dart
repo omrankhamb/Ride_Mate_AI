@@ -20,8 +20,8 @@ part 'models/ride.dart';
 part 'models/ride_location.dart';
 part 'models/ride_match.dart';
 part 'screens/auth/auth_page.dart';
-part 'screens/auth/auth_form_panel.dart';
-part 'screens/auth/auth_hero_panel.dart';
+
+
 part 'screens/rider/rider_home.dart';
 part 'screens/rider/rider_map_tab.dart';
 part 'screens/rider/chat_screen.dart';
@@ -109,11 +109,16 @@ class _AppRootState extends State<AppRoot> {
     }
   }
 
-  void _toggleMode() {
-    setState(() {
-      user = null;
-      api.token = null;
-    });
+  Future<void> _logout() async {
+    try {
+      await api.post('/api/auth/logout', {});
+    } catch (_) {}
+    api.logout();
+    if (mounted) {
+      setState(() {
+        user = null;
+      });
+    }
   }
 
   @override
@@ -135,14 +140,12 @@ class _AppRootState extends State<AppRoot> {
             user = loggedInUser;
           });
         },
-        onDemoRequested: _openDemo,
-        onAdminRequested: _openAdmin,
       );
     }
 
     return user!.role == 'DRIVER'
-        ? DriverHome(api: api, user: user!, onLogout: _toggleMode)
-        : RiderHome(api: api, user: user!, onLogout: _toggleMode);
+        ? DriverHome(api: api, user: user!, onLogout: _logout)
+        : RiderHome(api: api, user: user!, onLogout: _logout);
   }
 }
 
